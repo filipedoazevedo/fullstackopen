@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 const Button = ({onClick, text}) => <button onClick={onClick}>{text}</button>
 
-const StatisticLine = ({value, text}) => <p style={{margin: '0px'}}>{text} {value}</p>
+const StatisticLine = ({value, text}) => <tr><td>{text}</td><td>{value}</td></tr>
 
 const Statistics = ({good, neutral, bad}) => {
   if(!good && !neutral && !bad) {
@@ -17,12 +17,16 @@ const Statistics = ({good, neutral, bad}) => {
       <h1>statistics</h1>
     </div>
     <div>
-      <StatisticLine value={good} text="good"/>
-      <StatisticLine value={neutral} text="neutral"/>
-      <StatisticLine value={bad} text="bad"/>
-      <StatisticLine value={good + neutral + bad} text="all"/>
-      <StatisticLine value={ ((good*1 + neutral*0 + bad*-1) / (good + neutral + bad)) || 0 } text="average"/>
-      <StatisticLine value={((good / (good + neutral + bad)) * 100) + '%' || 0} text="positive"/>
+    <table>
+      <tbody>
+        <StatisticLine value={good} text="good"/>
+        <StatisticLine value={neutral} text="neutral"/>
+        <StatisticLine value={bad} text="bad"/>
+        <StatisticLine value={good + neutral + bad} text="all"/>
+        <StatisticLine value={ ((good*1 + neutral*0 + bad*-1) / (good + neutral + bad)) || 0 } text="average"/>
+        <StatisticLine value={((good / (good + neutral + bad)) * 100) + '%' || 0} text="positive"/>
+      </tbody>
+    </table>
     </div>
   </>
   )
