@@ -9,6 +9,10 @@ const App = () => {
   const addNewName = (event) => {
     event.preventDefault();
 
+    const somePerson = persons.some(p => p.name === newName);
+
+    if(somePerson) return alert(`${newName} is already added to phonebook`)
+
     const nameObject = {
       name: newName,
     };
