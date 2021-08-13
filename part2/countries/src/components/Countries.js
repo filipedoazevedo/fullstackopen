@@ -1,13 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Country from "./Country";
 
 const Countries = ({ filteredCountries }) => {
-  return filteredCountries.length === 1 ? (
-    <Country country={filteredCountries[0]} />
+  const [selectedCountry, setSelected] = useState("");
+  const showClickHandle = (country) => setSelected(country);
+
+  useEffect(() => {
+    if (filteredCountries.length === 1) setSelected(filteredCountries[0]);
+  }, [filteredCountries]);
+
+  return selectedCountry ? (
+    <Country country={selectedCountry} />
   ) : (
     filteredCountries.map((c) => (
       <p style={{ margin: "0px" }} key={c.alpha2Code}>
-        {c.name}
+        {c.name} <button onClick={() => showClickHandle(c)}>show</button>
       </p>
     ))
   );
