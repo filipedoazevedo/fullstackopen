@@ -44,6 +44,15 @@ const App = () => {
     p.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  const deletePerson = function(person) {
+    if (window.confirm(`Delete ${person.name}?`)) {
+      personsService.remove(person.id)
+      .then(() => {
+        setPersons(persons.filter(p => p.id !== person.id));
+      });
+    }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -57,7 +66,7 @@ const App = () => {
         newNumber={newNumber}
       />
       <h3>Numbers</h3>
-      <Persons filteredPersons={filteredPersons} />
+      <Persons filteredPersons={filteredPersons} deletePerson={deletePerson} />
     </div>
   );
 };
