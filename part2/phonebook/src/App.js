@@ -17,14 +17,21 @@ const App = () => {
   const addNewName = (event) => {
     event.preventDefault();
 
-    const somePerson = persons.some((p) => p.name === newName);
-
-    if (somePerson) return alert(`${newName} is already added to phonebook`);
-
+    const repeatedPerson = persons.find((p) => p.name === newName);
     const nameObject = {
       name: newName,
       number: newNumber,
     };
+
+    if (repeatedPerson) {
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        return personsService.update(repeatedPerson.id, nameObject)
+        .then(() => {
+          setPersons(persons.map(p => p.id !== repeatedPerson.id ? p : nameObject))
+        });
+      } 
+      return;
+    }
 
     personsService.create(nameObject)
       .then((createdPerson) => {
