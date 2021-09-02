@@ -3,12 +3,16 @@ import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import personsService from "./services/persons";
+import Notification from "./components/Notification";
+
+import './index.css'
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [search, setSearch] = useState("");
+  const [notification, setNotification] = useState(null);
 
   const handleNameChange = (event) => setNewName(event.target.value);
   const handleNumberChange = (event) => setNewNumber(event.target.value);
@@ -27,6 +31,14 @@ const App = () => {
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
         return personsService.update(repeatedPerson.id, nameObject)
         .then(() => {
+          setNotification({
+              message: `The number of ${newName} was edited`,
+              className: 'success',
+            }
+          )
+          setTimeout(() => {
+            setNotification(null)
+          }, 5000)
           setPersons(persons.map(p => p.id !== repeatedPerson.id ? p : nameObject))
         });
       } 
@@ -38,6 +50,14 @@ const App = () => {
         setPersons(persons.concat(createdPerson));
         setNewName("");
         setNewNumber("");
+        setNotification({
+            message: `Added ${newName}`,
+            className: 'success',
+          }
+        )
+        setTimeout(() => {
+          setNotification(null)
+        }, 5000)
       });
   };
 
@@ -63,6 +83,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification notification={notification} />
       <Filter handleSearchChange={handleSearchChange} search={search} />
       <h3>Add a new</h3>
       <PersonForm
