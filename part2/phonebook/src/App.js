@@ -40,6 +40,16 @@ const App = () => {
             setNotification(null)
           }, 5000)
           setPersons(persons.map(p => p.id !== repeatedPerson.id ? p : nameObject))
+        }).catch(() => {
+          setNotification({
+              message: `Information of ${newName} has already been removed from server`,
+              className: 'error',
+            }
+          )
+          setTimeout(() => {
+            setNotification(null)
+          }, 5000)
+          setPersons(persons.filter(p => p.id !== repeatedPerson.id))
         });
       } 
       return;
@@ -58,13 +68,31 @@ const App = () => {
         setTimeout(() => {
           setNotification(null)
         }, 5000)
+      }).catch(() => {
+        setNotification({
+            message: `There was an error adding information of ${newName}`,
+            className: 'error',
+          }
+        )
+        setTimeout(() => {
+          setNotification(null)
+        }, 5000)
       });
   };
 
   useEffect(() => {
     personsService.getAll().then((persons) => {
       setPersons(persons);
-    });
+    }).catch(() => {
+      setNotification({
+          message: `There was an error getting persons`,
+          className: 'error',
+        }
+      )
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
+    })
   }, []);
 
   const filteredPersons = persons.filter((p) =>
@@ -76,6 +104,15 @@ const App = () => {
       personsService.remove(person.id)
       .then(() => {
         setPersons(persons.filter(p => p.id !== person.id));
+      }).catch(() => {
+        setNotification({
+            message: `There was an error getting persons`,
+            className: 'error',
+          }
+        )
+        setTimeout(() => {
+          setNotification(null)
+        }, 5000)
       });
     }
   }
