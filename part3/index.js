@@ -57,8 +57,29 @@ app.delete("/api/persons/:id", (req, res) => {
 });
 
 app.post("/api/persons", (req, res) => {
-  const id = parseInt(Math.random() * (999999999 - 0) + 0);
   const { name, number } = req.body;
+  
+  if (!name) {
+    return res.status(400).json({
+      error: "name is missing",
+    });
+  }
+
+  if (!number) {
+    return res.status(400).json({
+      error: "number is missing",
+    });
+  }
+
+  const repeated_person = persons.find((p) => p.name === name);
+
+  if (repeated_person) {
+    return res.status(400).json({
+      error: "name must be unique",
+    });
+  }
+
+  const id = parseInt(Math.random() * (999999999 - 0) + 0);
   const person = {
     id,
     name,
