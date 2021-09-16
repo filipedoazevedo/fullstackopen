@@ -81,24 +81,14 @@ app.post("/api/persons", (req, res) => {
     });
   }
 
-  const repeated_person = persons.find((p) => p.name === name);
-
-  if (repeated_person) {
-    return res.status(400).json({
-      error: "name must be unique",
-    });
-  }
-
-  const id = parseInt(Math.random() * (999999999 - 0) + 0);
-  const person = {
-    id,
+  const person = new Person({
     name,
     number,
-  };
+  });
 
-  persons.push(person);
-
-  return res.json(person);
+  person.save().then((savedPerson) => {
+    return res.json(savedPerson);
+  });
 });
 
 const PORT = process.env.PORT || 3001;
