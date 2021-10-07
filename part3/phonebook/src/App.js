@@ -40,9 +40,9 @@ const App = () => {
             setNotification(null)
           }, 5000)
           setPersons(persons.map(p => p.id !== repeatedPerson.id ? p : nameObject))
-        }).catch(() => {
+        }).catch((error) => {
           setNotification({
-              message: `Information of ${newName} has already been removed from server`,
+              message: `${error.response.data.error}`,
               className: 'error',
             }
           )
@@ -68,9 +68,9 @@ const App = () => {
         setTimeout(() => {
           setNotification(null)
         }, 5000)
-      }).catch(() => {
+      }).catch((error) => {
         setNotification({
-            message: `There was an error adding information of ${newName}`,
+            message: `${error.response.data.error}`,
             className: 'error',
           }
         )
