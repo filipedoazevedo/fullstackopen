@@ -1,17 +1,17 @@
-const express = require("express");
-const morgan = require("morgan");
-const path = require("path");
-const app = express();
+const express = require('express')
+const morgan = require('morgan')
+const path = require('path')
+const app = express()
 
-require("dotenv").config();
+require('dotenv').config()
 
-app.use(express.static(path.join(__dirname, "build")));
-app.use(express.json());
-const Person = require(path.join(__dirname, "./models/person"));
+app.use(express.static(path.join(__dirname, 'build')))
+app.use(express.json())
+const Person = require(path.join(__dirname, './models/person'))
 
-morgan.token("body", function (req, res) {
-  return JSON.stringify(req.body);
-});
+morgan.token('body', function (req) {
+  return JSON.stringify(req.body)
+})
 
 app.use(
   morgan(function (tokens, req, res) {
@@ -19,100 +19,100 @@ app.use(
       tokens.method(req, res),
       tokens.url(req, res),
       tokens.status(req, res),
-      tokens.res(req, res, "content-length"),
-      "-",
-      tokens["response-time"](req, res),
-      "ms",
-      tokens["body"](req, res),
-    ].join(" ");
+      tokens.res(req, res, 'content-length'),
+      '-',
+      tokens['response-time'](req, res),
+      'ms',
+      tokens['body'](req, res),
+    ].join(' ')
   })
-);
+)
 
-app.get("/api/persons", (req, res, next) => {
+app.get('/api/persons', (req, res, next) => {
   Person.find({})
     .then((persons) => {
-      return res.json(persons);
+      return res.json(persons)
     })
-    .catch((error) => next(error));
-});
+    .catch((error) => next(error))
+})
 
-app.get("/info", (req, res, next) => {
+app.get('/info', (req, res, next) => {
   Person.find({})
     .then((persons) => {
       const info = `<div>
                     <p>Phonebook has info for ${persons.length} people</p>
                     <p>${new Date()}</p>
-                </div>`;
-      res.send(info);
+                </div>`
+      res.send(info)
     })
-    .catch((error) => next(error));
-});
+    .catch((error) => next(error))
+})
 
-app.get("/api/persons/:id", (req, res, next) => {
-  const id = req.params.id;
+app.get('/api/persons/:id', (req, res, next) => {
+  const id = req.params.id
   Person.findById(id)
     .then((person) => {
-      if (person) return res.json(person);
+      if (person) return res.json(person)
 
-      return res.status(404).end();
+      return res.status(404).end()
     })
-    .catch((error) => next(error));
-});
+    .catch((error) => next(error))
+})
 
-app.delete("/api/persons/:id", (req, res, next) => {
+app.delete('/api/persons/:id', (req, res, next) => {
   Person.findByIdAndRemove(req.params.id)
-    .then((result) => {
-      res.status(204).end();
+    .then(() => {
+      res.status(204).end()
     })
-    .catch((error) => next(error));
-});
+    .catch((error) => next(error))
+})
 
-app.post("/api/persons", (req, res, next) => {
-  const { name, number } = req.body;
+app.post('/api/persons', (req, res, next) => {
+  const { name, number } = req.body
 
   const person = new Person({
     name,
     number,
-  });
+  })
 
   person
     .save()
     .then((savedPerson) => {
-      return res.json(savedPerson);
+      return res.json(savedPerson)
     })
-    .catch((error) => next(error));
-});
+    .catch((error) => next(error))
+})
 
-app.put("/api/persons/:id", (req, res, next) => {
-  const { name, number } = req.body;
+app.put('/api/persons/:id', (req, res, next) => {
+  const { name, number } = req.body
 
   const person = {
     name,
     number,
-  };
+  }
 
   Person.findByIdAndUpdate(req.params.id, person, { new: true, runValidators: true })
     .then((updatedPerson) => {
-      res.json(updatedPerson);
+      res.json(updatedPerson)
     })
-    .catch((error) => next(error));
-});
+    .catch((error) => next(error))
+})
 
 const errorHandler = (error, request, response, next) => {
-  console.error(error.message);
+  console.error(error.message)
 
-  if (error.name === "CastError") {
-    return response.status(400).send({ error: "malformatted id" });
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
   }  else if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message })
   }
 
-  next(error);
-};
+  next(error)
+}
 
-app.use(errorHandler);
+app.use(errorHandler)
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+  console.log(`Server running on port ${PORT}`)
+})
