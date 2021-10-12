@@ -19,9 +19,15 @@ const favoriteBlog = (blogs) => {
         return (prev.likes > item.likes) ? prev : item
     }
 
-    return blogs.length === 0
-        ? {}
-        : blogs.reduce(reducer, 0)
+    if(blogs.length === 0) return {}
+
+    const favoriteBlog = blogs.reduce(reducer, 0)
+
+    return {
+        title: favoriteBlog.title,
+        author: favoriteBlog.author,
+        likes: favoriteBlog.likes,
+    }
 }
 
 const mostBlogs = (blogs) => {
