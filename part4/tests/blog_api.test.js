@@ -62,6 +62,29 @@ describe('add blogs', () => {
             newBlog.title
         )
     })
+
+    test('if likes property is not given, set default value to 0', async () => {
+        const newBlog = {
+            title: 'Test Blog',
+            author: 'Test Author',
+            url: 'http://test.com',
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+
+        const titles = blogsAtEnd.map(b => b.title)
+        expect(titles).toContain(
+            newBlog.title
+        )
+        expect(blogsAtEnd.pop().likes).toBeDefined()
+    })
 })
 
 afterAll(() => {
