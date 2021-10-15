@@ -30,6 +30,13 @@ describe('get blogs', () => {
 
         expect(response.body).toHaveLength(helper.initialBlogs.length)
     })
+
+    test('unique identifier property of the blog posts is named id', async () => {
+        const response = await api.get('/api/blogs')
+        const [blog] = response.body
+
+        expect(blog.id).toBeDefined()
+    })
 })
 
 afterAll(() => {
