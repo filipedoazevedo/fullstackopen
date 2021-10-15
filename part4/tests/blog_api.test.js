@@ -85,6 +85,38 @@ describe('add blogs', () => {
         )
         expect(blogsAtEnd.pop().likes).toBeDefined()
     })
+
+    test('blog without title is not added', async () => {
+        const newBlog = {
+            author: 'Test Author',
+            url: 'http://test.com',
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(400)
+
+        const blogsAtEnd = await helper.blogsInDb()
+
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+    })
+
+    test('blog without url is not added', async () => {
+        const newBlog = {
+            title: 'Test Title',
+            author: 'Test Author',
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(400)
+
+        const blogsAtEnd = await helper.blogsInDb()
+
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+    })
 })
 
 afterAll(() => {
