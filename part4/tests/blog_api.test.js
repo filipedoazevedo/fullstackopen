@@ -39,6 +39,31 @@ describe('get blogs', () => {
     })
 })
 
+describe('add blogs', () => {
+    test('a valid blog can be added', async () => {
+        const newBlog = {
+            title: 'Test Blog',
+            author: 'Test Author',
+            url: 'http://test.com',
+            likes: 0,
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+
+        const titles = blogsAtEnd.map(b => b.title)
+        expect(titles).toContain(
+            newBlog.title
+        )
+    })
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })
