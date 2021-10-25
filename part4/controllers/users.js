@@ -10,6 +10,18 @@ usersRouter.get('/', async (request, response) => {
 usersRouter.post('/', async (request, response) => {
     const body = request.body
 
+    if(!body.password) {
+        const error = new Error('The password field is missing')
+        error.name = 'ValidationError'
+        throw(error)
+    }
+
+    if(body.password.length < 3) {
+        const error = new Error('The password field is too short')
+        error.name = 'ValidationError'
+        throw(error)
+    }
+
     const saltRounds = 10
     const passwordHash = await bcrypt.hash(body.password, saltRounds)
 
