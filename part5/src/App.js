@@ -8,6 +8,7 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
+  const [newBlog, setNewBlog] = useState({});
 
   useEffect(() => {
     if (user) {
@@ -77,6 +78,50 @@ const App = () => {
     </form>
   );
 
+  const handleBlogChange = (event, property) => {
+    const newBlogObject = Object.assign({}, newBlog);;
+    newBlogObject[property] = event.target.value;
+
+    setNewBlog(newBlogObject);
+  };
+
+  const addBlog = async (event) => {
+    event.preventDefault();
+
+    const returnedBlog = await blogService
+      .create(newBlog)
+
+      setBlogs(blogs.concat(returnedBlog))
+      setNewBlog({})
+  };
+
+  const blogForm = () => (
+    <form onSubmit={addBlog}>
+      <div>
+        <label>title:</label>
+        <input
+          value={newBlog.title}
+          onChange={(event) => { handleBlogChange(event, 'title') }}
+        />
+      </div>
+      <div>
+        <label>author:</label>
+        <input
+          value={newBlog.author}
+          onChange={(event) => { handleBlogChange(event, 'author') }}
+        />
+      </div>
+      <div>
+        <label>url:</label>
+      <input
+        value={newBlog.url}
+        onChange={(event) => { handleBlogChange(event, 'url') }}
+      />
+      </div>
+      <button style={{marginTop: "10px"}} type="submit">save</button>
+    </form>
+  )
+
   return (
     <div>
       {user === null ? (
@@ -88,6 +133,7 @@ const App = () => {
         <div>
           <h2>blogs</h2>
           <p>{user.name} logged-in <button onClick={handleLogout}>Logout</button></p>
+          {blogForm()}
           {blogs.map((blog) => (
             <Blog key={blog.id} blog={blog} />
           ))}
