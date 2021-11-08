@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import Notification from "./components/Notification";
+import BlogForm from "./components/BlogForm";
+import Togglable from "./components/Togglable";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [newBlog, setNewBlog] = useState({});
+  const blogFormRef = useRef();
+
   const [notification, setNotification] = useState(null);
 
   useEffect(() => {
@@ -108,24 +111,13 @@ const App = () => {
     </form>
   );
 
-  const handleBlogChange = (event, property) => {
-    const newBlogObject = Object.assign({}, newBlog);
-    newBlogObject[property] = event.target.value;
-
-    setNewBlog(newBlogObject);
-  };
-
-  const addBlog = async (event) => {
-    event.preventDefault();
+  const addBlog = async (blogObject) => {
     try {
-      const returnedBlog = await blogService.create(newBlog);
+      blogFormRef.current.toggleVisibility()
+      const returnedBlog = await blogService.create(blogObject);
 
       setBlogs(blogs.concat(returnedBlog));
-      setNewBlog({
-        title: "",
-        author: "",
-        url: "",
-      });
+
       setNotification({
         message: `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`,
         className: "success",
@@ -145,38 +137,9 @@ const App = () => {
   };
 
   const blogForm = () => (
-    <form onSubmit={addBlog}>
-      <div>
-        <label>title:</label>
-        <input
-          value={newBlog.title}
-          onChange={(event) => {
-            handleBlogChange(event, "title");
-          }}
-        />
-      </div>
-      <div>
-        <label>author:</label>
-        <input
-          value={newBlog.author}
-          onChange={(event) => {
-            handleBlogChange(event, "author");
-          }}
-        />
-      </div>
-      <div>
-        <label>url:</label>
-        <input
-          value={newBlog.url}
-          onChange={(event) => {
-            handleBlogChange(event, "url");
-          }}
-        />
-      </div>
-      <button style={{ marginTop: "10px" }} type="submit">
-        save
-      </button>
-    </form>
+    <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+      <BlogForm createBlog={addBlog} />
+    </Togglable>
   );
 
   return (
